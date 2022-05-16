@@ -22,6 +22,13 @@ def read_file():
     return l, r
 
 
+def write_file(*results):
+    with open('res.txt', 'w') as f:
+        for res in results:
+            f.write(res)
+            f.write('\n')
+
+
 def get_console_intervals():
     while True:
         try:
@@ -51,11 +58,26 @@ def get_choice():
     return work_choice
 
 
+def get_out_choice():
+    while True:
+        try:
+            output_choice = int(input('Введите\n'
+                            '0 -- вывести результаты на экран\n'
+                            '1 -- вывести результаты в файл\n'))
+            if output_choice < 0 or output_choice >= 2:
+                print('Ошибка. Можно выбрать 0 или 1')
+            else:
+                break
+        except ValueError:
+            print('Ошибка. Введите целое число')
+    return output_choice
+
+
 def get_func_num():
     while True:
         try:
             n = int(input('Введите номер выбранной функции: '))
-            if n >= 3 or n <= 0:
+            if n >= 3 or n < 0:
                 print('Ошибка. Нумерация от 0 до 2')
             else:
                 break
@@ -68,7 +90,7 @@ def get_meth_num():
     while True:
         try:
             n = int(input('Введите номер выбранного метода решения: '))
-            if n >= 2 or n <= 0:
+            if n >= 2 or n < 0:
                 print('Ошибка. Нумерация от 0 до 1')
             else:
                 break
@@ -107,4 +129,7 @@ def get_console_inputs_for_eq():
         l, r = get_console_intervals()
     else:
         l, r = read_file()
-    return fnum, l, r, meth_num
+
+    outp_num = get_out_choice()
+
+    return fnum, l, r, meth_num, outp_num

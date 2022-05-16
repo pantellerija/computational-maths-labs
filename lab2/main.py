@@ -68,19 +68,26 @@ if __name__ == '__main__':
     if io_lib.get_choice() == 1:
         print('Система нелинейныйх уравнений: ')
         print(nonlinear_sys)
-        a, b = sys_inplist[io_lib.get_data_source()]()
-        x1, x2, iter_num = meth.sys_iteration_method(nonlinear_system, a, b, eps)
+        a, b = sys_inplist[ io_lib.get_data_source() ]()
+        x1, x2, iter_num, err_vec1, err_vec2 = meth.sys_iteration_method(nonlinear_system, a, b, eps)
         print(f'Найденный корень системы уравнений = (%.3f; %.3f) с точностью ε = {eps}' % (x1, x2))
+        print(f'Вектор погрешностей: [{err_vec1};{err_vec2}]')
         print(f'Число итераций: {iter_num}')
         build_plot_sys()
     else:
-        f_ind, a, b, m_id = io_lib.get_console_inputs_for_eq()
+        f_ind, a, b, m_id, out_choice = io_lib.get_console_inputs_for_eq()
         y = flist[f_ind]
         if meth.is_root_exist(y, a, b):
-            ans, iter_num = mlist[m_id](y, a, b, eps)
-            print(f'Найденный корень уравнения = %.3f с точностью ε = {eps}' % ans)
-            print(f'Значение функции при x = %.3f: %.d' % (ans, y(ans)))
-            print(f'Число итераций: {iter_num}')
-            build_plot_eq(y, a-0.5, b+0.5, y(a)-0.5, y(b)+0.5)
+            try:
+                ans, iter_num = mlist[m_id](y, a, b, eps)
+                if out_choice == 0:
+                    print(f'Найденный корень уравнения = %.3f с точностью ε = {eps}' % ans)
+                    print(f'Значение функции при x = %.3f: %.d' % (ans, y(ans)))
+                    print(f'Число итераций: {iter_num}')
+                else:
+                    io_lib.write_file(str(ans), str( y(ans) ), str(iter_num) )
+                build_plot_eq(y, a-0.5, b+0.5, y(a)-0.5, y(b)+0.5)
+            except RuntimeError as r:
+                print(r)
         else:
             print(f'У уравнения на интервале [{a};{b}] нет корней. Поменяйте границы интервала')

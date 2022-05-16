@@ -34,8 +34,7 @@ def secant_method(f, a, b, eps):
         k += 1
         H = dif_approx(f, c_prev, c_prev1)
         if H == 0:
-            print('Разностное приближение =  0. Нельзя делить на ноль')
-            exit(0)
+            raise (RuntimeError('Ошибка. Разностное приближение равно 0 (нельзя делить)'))
         c = c_prev - f(c_prev) / H
         c_prev1, c_prev = c_prev, c
         M = abs(c_prev - c_prev1)
@@ -141,6 +140,8 @@ def sys_iteration_method(f_arr, x1_init, x2_init, eps):
         x1 = fi_arr[0](x1_prev, x2_prev)
         x2 = fi_arr[1](x1_prev, x2_prev)
         print(f'Приближённое решение системы на {k}-й итерации (%.3f, %.3f)' % (x1, x2))
-        M = max(abs(x1 - x1_prev), abs(x2 - x2_prev))
+        err_vec1 = abs(x1-x1_prev)
+        err_vec2 = abs(x2-x2_prev)
+        M = max(err_vec1, err_vec2)
         x1_prev, x2_prev = x1, x2
-    return x1, x2, k
+    return x1, x2, k, err_vec1, err_vec2
