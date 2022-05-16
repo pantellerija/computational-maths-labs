@@ -54,33 +54,24 @@ def get_lambda(a, b):
     return l
 
 
-def check_conv_cond_for_eq(l, m):
-    max_dfi = abs(l * m + 1)
-    print(f'Коэффициент сходимости = %.3f' % max_dfi)
-    return max_dfi < 1
+def init_approx(f, a, b):
+    fi = lambda x: x - f(x)
+    q_1 = abs( derivative(fi, a) )
+    q_2 = abs( derivative(fi, b) )
+    if q_1 < 1 and q_2 < 1:
+        print('Достаточное условие сходимости выполняется')
+    else:
+        print('Достаточное условие сходимости не выполняется')
+    return (b-a)/2
 
 
 def iteration_method(f, a, b, eps):
     print('---Метод простой итерации---')
     x = math.inf
     k = 0
-    x_prev = 0
 
-    if check_init_approx(f, a):
-        x_prev = a
-    elif check_init_approx(f, b):
-        x_prev = b
-
-    a_der = derivative(f, a)
-    b_der = derivative(f, b)
-
-    l = get_lambda(a_der, b_der)
-
-    if check_conv_cond_for_eq(l, max(a_der, b_der)):
-        print('Достаточное условие сходимости метода выполняется')
-    else:
-        print('Достаточное условие сходимости метода не выполняется')
-
+    x_prev = init_approx(f, a, b)
+    l = get_lambda(derivative(f, a), derivative(f, b))
     while abs(x - x_prev) > eps:
         if k != 0:
             x_prev = x
@@ -125,6 +116,8 @@ def sys_iteration_method(f_arr, x1_init, x2_init, eps):
     print('--Метод простой итерации---')
     k = 0
     x1, x2 = 0, 0
+    err_vec1, err_vec2 = 0, 0
+    M = 1
 
     fi_arr = [
         lambda _x1, _x2: _x1 - f_arr[0](_x1, _x2),
@@ -133,8 +126,6 @@ def sys_iteration_method(f_arr, x1_init, x2_init, eps):
 
     check_conv_for_sys_eq(get_partial_der_arr(fi_arr, x1_init, x2_init))
     x1_prev, x2_prev = x1_init, x2_init
-    M = 1
-
     while M > eps:
         k += 1
         x1 = fi_arr[0](x1_prev, x2_prev)

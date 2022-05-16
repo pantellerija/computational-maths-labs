@@ -33,7 +33,7 @@ sys_inplist = [
 nonlinear_sys = '0.1x1^2+x1+0.2x2^2-0.3=0,\n' \
                     '0.2xq^2+x2-0.1x1*x2-0.72=0\n'
 
-eps = 0.0005
+eps = 0.001
 
 
 def build_plot_sys():
@@ -46,8 +46,8 @@ def build_plot_sys():
 def build_plot_eq(func, left, right, y_l, y_r):
     x = np.linspace(left, right, 10000)
     f = np.vectorize(func)
-    x_step = 0.2
-    y_step = 20
+    x_step = 1
+    y_step = 1
 
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
