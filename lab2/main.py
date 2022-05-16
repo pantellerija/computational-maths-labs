@@ -1,60 +1,86 @@
 import math
+
+import numpy as np
+from matplotlib import pyplot as plt
+
 import methods as meth
+import sympy as sp
+
+import io_lib
+
+# 1.045 1m(0.0005) -1.8 2m(0.002)--[3.14;4.71] 1.172 2m(0.0025)
+flist = [
+    lambda x: x**5 - x - 0.2,
+    lambda x: x**3 - x + 4,
+    lambda x: x - math.sin(x) - 0.25
+]
+
+nonlinear_system = [
+    lambda x1, x2: 0.1*x1**2 + x1 + 0.2*x2**2 - 0.3,
+    lambda x1, x2: 0.2*x1**2 + x2 - 0.1*x1*x2 - 0.7
+]
+
+mlist = [
+    meth.secant_method,
+    meth.iteration_method
+]
+
+sys_inplist = [
+    io_lib.get_console_intervals,
+    io_lib.read_file
+]
+
+nonlinear_sys = '0.1x1^2+x1+0.2x2^2-0.3=0,\n' \
+                    '0.2xq^2+x2-0.1x1*x2-0.72=0\n'
+
+eps = 0.0005
 
 
-def get_console_inputs():
-    print('hi girls')
-    str_flist = [
-        'x^5-x-0.2',
-        'sin(x)-x*cos(x)',
-        'x-sin(x)-0.25'
-    ]
-    str_mlist = [
-        'Метод секущих',
-        'Метод простой итерации'
-    ]
-    work_choice = int(input('Введите\n'
-                            '0 -- найти корень нелинейной функции из предложенных\n'
-                            '1 -- найти корень предложенной нелинейной системы\n'))
-    if work_choice:
-        print('Простите это ещё не реализовано')
-        exit(0)
-    else:
-        for i in range(len(str_flist)):
-            print(f'{i}-я функция: {str_flist[i]}')
-        fnum = int(input('Введите номер выбранной функции: '))
-        print(f'Вы выбрали функцию {str_flist[fnum]}')
+def build_plot_sys():
+    x = sp.Symbol('x')
+    y = sp.Symbol('y')
+    sp.plot_implicit(sp.Or(sp.Eq(nonlinear_system[0](x, y), 0), sp.Eq(
+        nonlinear_system[1](x, y), 0)))
 
-        print('Выберите метод решенения:')
-        for i in range(len(str_mlist)):
-            print(f'{i}-й метод решения: {str_mlist[i]}')
-        method_num = int(input('Введите номер выбранного метода решения: '))
 
-        l = float(input('Введите левую границу интервала: '))
-        r = float(input('Введите правую границу интервала: '))
-        return fnum, l, r, method_num
+def build_plot_eq(func, left, right, y_l, y_r):
+    x = np.linspace(left, right, 10000)
+    f = np.vectorize(func)
+    x_step = 0.2
+    y_step = 20
+
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    ax.spines['left'].set_position('center')
+    ax.spines['bottom'].set_position('center')
+    ax.xaxis.set_ticks_position('bottom')
+    ax.yaxis.set_ticks_position('left')
+
+    ax.plot(x, f(x), "g", linewidth=2.0)
+
+    ax.set(xlim=(left, right), xticks=np.arange(left, right, x_step),
+           ylim=(y_l, y_r), yticks=np.arange(y_l, y_r, y_step))
+
+    plt.show()
 
 
 if __name__ == '__main__':
-    # 1.045 1m(0.0005) 4.494 1m(0.0001)--[pi;3pi/2] 1.172 2m(0.0025)
-    flist = [
-        lambda x: x**5 - x - 0.2,
-        lambda x: math.sin(x)-x*math.cos(x),
-        lambda x: x - math.sin(x) - 0.25
-    ]
-    mlist = [
-        meth.secant_method,
-        meth.iteration_method
-    ]
-    f_ind, a, b, m_id = get_console_inputs()
-    y = flist[f_ind]
-    # a = 0
-    # b = 10
-    eps = 0.0005
-    if meth.is_root_exist(y, a, b):
-        ans, iter_num = mlist[m_id](y, a, b, eps)
-        print(f'Найденный корень уравнения = %.3f с точностью ε = {eps}' % ans)
-        print(f'Значение функции при x = %.3f: %.d' % (ans, y(ans)))
+    if io_lib.get_choice() == 1:
+        print('Система нелинейныйх уравнений: ')
+        print(nonlinear_sys)
+        a, b = sys_inplist[io_lib.get_data_source()]()
+        x1, x2, iter_num = meth.sys_iteration_method(nonlinear_system, a, b, eps)
+        print(f'Найденный корень системы уравнений = (%.3f; %.3f) с точностью ε = {eps}' % (x1, x2))
         print(f'Число итераций: {iter_num}')
+        build_plot_sys()
     else:
-        print(f'У уравнения на отрезке [{a};{b}] нет корней. Поменяйте границы отрезка')
+        f_ind, a, b, m_id = io_lib.get_console_inputs_for_eq()
+        y = flist[f_ind]
+        if meth.is_root_exist(y, a, b):
+            ans, iter_num = mlist[m_id](y, a, b, eps)
+            print(f'Найденный корень уравнения = %.3f с точностью ε = {eps}' % ans)
+            print(f'Значение функции при x = %.3f: %.d' % (ans, y(ans)))
+            print(f'Число итераций: {iter_num}')
+            build_plot_eq(y, a-0.5, b+0.5, y(a)-0.5, y(b)+0.5)
+        else:
+            print(f'У уравнения на интервале [{a};{b}] нет корней. Поменяйте границы интервала')
