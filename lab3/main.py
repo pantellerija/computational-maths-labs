@@ -1,6 +1,7 @@
 import math
 
 from lab3 import methods
+import io_lib
 
 func_list = [
     # 2.33 от 1 до 2
@@ -17,10 +18,11 @@ meth_list = [
 ]
 
 if __name__ == '__main__':
-    a = 0
-    b = 1.5
-    eps = 0.0001
-    n = 10
-    ans, num = methods.simpson_method(func_list[2], a, b, n, eps)
+    fnum, a, b, mnum = io_lib.get_console_inputs()
+    eps = 0.001
+    n = 4
+    ans, num, err = meth_list[mnum](func_list[fnum], a, b, n, eps)
     print(f'Значение интеграла: %.4f' % ans)
     print(f'Число разбиений: %.d' % num)
+    print(f'Погрешность: %.10f' % err)
+

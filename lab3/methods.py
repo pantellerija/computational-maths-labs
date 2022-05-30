@@ -1,7 +1,7 @@
 def trapezoid_sum(func, a, b, n):
     h = 1.0 * (b - a) / n
-    sum = 0.5 * (func(a) * func(b))
-    for i in range(n):
+    sum = 0.5 * (func(a) + func(b))
+    for i in range(1,n-1):
         sum += func(a + i * h)
     return sum * h
 
@@ -17,7 +17,7 @@ def trapezoidal_method(func, a, b, n, eps):
         sum = trapezoid_sum(func, a, b, n)
         n *= 2
         M = abs(sum - prev_sum) / (2 ** k - 1)
-    return sum, n / 2
+    return sum, n / 2, M
 
 
 def simpson_sum(func, a, b, n):
@@ -41,7 +41,7 @@ def simpson_method(func, a, b, n, eps):
         sum = simpson_sum(func, a, b, n)
         n *= 2
         M = abs(sum - prev_sum) / (2 ** k - 1)
-    return sum, n/2
+    return sum, n/2, M
 
 
 # additional
@@ -69,6 +69,14 @@ def simpson_method_with_trap(func, a, b, n, eps):
         M = abs(ans - prev_ans)/(2**k-1)
     return ans, n
 
+
+def calculate_improper_int(func,method, a, b, bp,n,eps):
+    if bp == a:
+        return method(func,a+eps,b,n,eps)[0]
+    elif bp == b:
+        return method(func,a,b-eps,n,eps)[0]
+    else:
+        return method(func, a, bp+eps, n, eps)[0] + method(func, a, bp-eps, n, eps)[0]
 
 
 
