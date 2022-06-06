@@ -44,32 +44,6 @@ def simpson_method(func, a, b, n, eps):
     return sum, n/2, M
 
 
-# additional
-
-def double_trapezoid(func, a, b, n):
-    h = (b-a)/2
-    x = a + h/2
-    sum = 0
-    for i in range(n):
-        sum += func(x + i*h)
-    return sum*h/2
-
-
-def simpson_method_with_trap(func, a, b, n, eps):
-    k = 4
-    tr_prev_sum = trapezoid_sum(func, a, b, n)
-    tr_sum = double_trapezoid(func, a, b, n)
-    ans = (4*tr_sum-tr_prev_sum)/3
-    M = max(1, abs(ans))
-    while M > eps:
-        prev_ans = ans
-        tr_prev_sum = tr_sum
-        tr_sum = double_trapezoid(func, a, b, n)
-        ans = (4 * tr_sum - tr_prev_sum) / 3
-        M = abs(ans - prev_ans)/(2**k-1)
-    return ans, n
-
-
 def calculate_improper_int(func,method, a, b, bp,n,eps):
     if bp == a:
         return method(func,a+eps,b,n,eps)[0]
