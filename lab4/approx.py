@@ -83,9 +83,9 @@ def linear_approx(func):
         S += e_kv
         k += 1
         print(f'{k}-я итерация:')
-        print(f'Значение аппроксимирующей функции: {func_arr[i]}')
-        print(f'Отклонение: {e_arr[i]}')
-        print(f'Оценка относительной погрешности аппроксимации: {p_arr[i]}')
+        print(f'Значение аппроксимирующей функции: {round(func_arr[i])}')
+        print(f'Отклонение: {round(e_arr[i])}')
+        print(f'Оценка относительной погрешности аппроксимации: {round(p_arr[i])}')
     xq_sum = sum(xq_dev)
     yq_sum = sum(yq_dev)
     sko = math.sqrt(S / n)
