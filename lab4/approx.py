@@ -1,8 +1,31 @@
 import math
-
 import numpy as np
 
 from lab4.slau import solve_sys, make_diagonal
+
+
+def mnk(approx, x, y):
+    n = len(x)
+    func_arr = [0] * n
+    e_arr = [0] * n
+    p_arr = [0.0] * n
+    k = 0
+    S = 0  # мера отклонения
+
+    for i in range(n):
+        func_arr[i] = approx(x[i])
+        e_arr[i] = func_arr[i] - y[i]
+        p_arr[i] = e_arr[i] / func_arr[i]
+        e_kv = e_arr[i] * e_arr[i]
+        S += e_kv
+        k += 1
+        print()
+        print(f'{k}-я итерация:')
+        print(f'Значение аппроксимирующей функции: {round(func_arr[i], 3)}')
+        print(f'Отклонение: {round(e_arr[i], 3)}')
+        print(f'Мера отклонения: {round(S, 3)}')
+        print(f'Оценка относительной погрешности аппроксимации: {round(p_arr[i], 3)}')
+    return func_arr, e_arr, p_arr, S
 
 
 def linear_approx(func):
@@ -33,6 +56,7 @@ def linear_approx(func):
     print('Коэффициент a:', a)
     print('Коэффициент b:', b)
     apprx_func = lambda x: a * x + b
+    print(f'Аппроксимирующая функция: {round(a, 3)}*x + {round(b, 3)}')
 
     # Мера отклонения
     S = 0
@@ -66,7 +90,7 @@ def linear_approx(func):
         print(f'Оценка относительной погрешности аппроксимации: {p_arr[i]}')
     xq_sum = sum(xq_dev)
     yq_sum = sum(yq_dev)
-    sko = math.sqrt(S/n)
+    sko = math.sqrt(S / n)
 
     # Коэффициент корреляции Пирсона:
     r = num_pirs / math.sqrt(xq_sum * yq_sum)
@@ -100,36 +124,16 @@ def quad_approx(func):
     matrix = np.array([[n, s_x, s_xx, s_y],
                        [s_x, s_xx, s_3x, s_xy],
                        [s_xx, s_3x, s_4x, s_xxy]])
-    solve_sys(matrix)
-    make_diagonal(matrix)
+    new_matrix = make_diagonal(solve_sys(np.copy(matrix)))
 
-    ans = matrix[:, -1]
+    ans = new_matrix[:, -1]
     a0, a1, a2 = ans[0], ans[1], ans[2]
-    print('a0: ', ans[0])
-    print('a1: ', ans[1])
-    print('a2: ', ans[2])
 
-    apprx_func = lambda x: a0 + a1 * x + a2 * x * x
-
-    func_arr = [0] * n
-    e_arr = [0] * n
-    p_arr = [0.0] * n
-    k = 0
-    S = 0  # мера отклонения
-
-    for i in range(n):
-        func_arr[i] = apprx_func(x_args[i])
-        e_arr[i] = func_arr[i] - y_args[i]
-        p_arr[i] = e_arr[i] / func_arr[i]
-        e_kv = e_arr[i] * e_arr[i]
-        S += e_kv
-        k += 1
-        print(f'{k}-я итерация:')
-        print(f'Значение аппроксимирующей функции: {func_arr[i]}')
-        print(f'Отклонение: {e_arr[i]}')
-        print(f'Оценка относительной погрешности аппроксимации: {p_arr[i]}')
-    sko = math.sqrt(S/n)
-    return apprx_func, func_arr, e_arr, p_arr, S, sko
+    approx = lambda x: a0 + a1 * x + a2 * x * x
+    print(f'Аппроксимирующая функция: {round(a0, 3)} + {round(a1, 3)}*x + {round(a2, 3)}*x^2')
+    func_arr, e_arr, p_arr, S = mnk(approx, x_args, y_args)
+    sko = math.sqrt(S / n)
+    return approx, func_arr, e_arr, p_arr, sko
 
 
 def qubic_approx(func):
@@ -162,43 +166,22 @@ def qubic_approx(func):
     xxy_args = [xx_args[i] * y_args[i] for i in range(n)]
     s_xxy = sum(xxy_args)
 
-    x3y_args = [x_3args * y_args[i] for i in range(n)]
+    x3y_args = [x_3args[i] * y_args[i] for i in range(n)]
     s_3xy = sum(x3y_args)
 
     matrix = np.array([[n, s_x, s_xx, s_3x, s_y],
                        [s_x, s_xx, s_3x, s_4x, s_xy],
                        [s_xx, s_3x, s_4x, s_5x, s_xxy],
                        [s_3x, s_4x, s_5x, s_6x, s_3xy]])
-    solve_sys(matrix)
-    make_diagonal(matrix)
-
-    ans = matrix[:, -1]
+    m2 = make_diagonal(solve_sys(np.copy(matrix)))
+    ans = m2[:, -1]
     a0, a1, a2, a3 = ans[0], ans[1], ans[2], ans[3]
-    print('a0: ', a0)
-    print('a1: ', a1)
-    print('a2: ', a2)
-    print('a3: ', a3)
 
-    apprx_func = lambda x: a0 + a1 * x + a2 * x * x + a3 * x * x * x
-
-    func_arr = [0] * n
-    e_arr = [0] * n
-    p_arr = [0.0] * n
-    k = 0
-    S = 0  # мера отклонения
-    for i in range(n):
-        func_arr[i] = apprx_func(x_args[i])
-        e_arr[i] = func_arr[i] - y_args[i]
-        p_arr[i] = e_arr[i] / func_arr[i]
-        e_kv = e_arr[i] * e_arr[i]
-        S += e_kv
-        k += 1
-        print(f'{k}-я итерация:')
-        print(f'Значение аппроксимирующей функции: {func_arr[i]}')
-        print(f'Отклонение: {e_arr[i]}')
-        print(f'Оценка относительной погрешности аппроксимации: {p_arr[i]}')
-    sko = math.sqrt(S/n)
-    return apprx_func, func_arr, e_arr, p_arr, S, sko
+    approx = lambda x: a0 + a1 * x + a2 * x * x + a3 * x * x * x
+    print(f'Аппроксимирующая функция: {round(a0, 3)} + {round(a1, 3)}*x + {round(a2, 3)}*x^2 + {round(a3, 3)}*x^3')
+    func_arr, e_arr, p_arr, S = mnk(approx, x_args, y_args)
+    sko = math.sqrt(S / n)
+    return approx, func_arr, e_arr, p_arr, sko
 
 
 def exp_approx(func):
@@ -228,31 +211,17 @@ def exp_approx(func):
     a = delta1 / delta
     b = delta2 / delta
 
-    print('Коэффициент a:', a)
-    print('Коэффициент b:', b)
-    apprx_func = lambda x: a * x + math.log(b)
+    approx = lambda x: a * x + math.log(b)
+    print(f'Аппроксимирующая функция: {round(a, 3)}*x + ln({round(b, 3)})')
+    func_arr, e_arr, p_arr, S = mnk(approx, x_args, y_args)
+    sko = math.sqrt(S / n)
+    return approx, func_arr, e_arr, p_arr, sko
 
-    # Мера отклонения
-    S = 0
 
-    k = 0
-    func_arr = [0] * n
-    e_arr = [0] * n
-    p_arr = [0.0] * n
-    for i in range(n):
-        # МНК
-        func_arr[i] = apprx_func(x_args[i])
-        e_arr[i] = func_arr[i] - y_args[i]
-        p_arr[i] = e_arr[i] / func_arr[i]
-        e_kv = e_arr[i] * e_arr[i]
-        S += e_kv
-        k += 1
-        print(f'{k}-я итерация:')
-        print(f'Значение аппроксимирующей функции: {func_arr[i]}')
-        print(f'Отклонение: {e_arr[i]}')
-        print(f'Оценка относительной погрешности аппроксимации: {p_arr[i]}')
-    sko = math.sqrt(S/n)
-    return apprx_func, func_arr, e_arr, p_arr, S, sko
+def check_tolerance_range(args):
+    for i in args:
+        if i <= 0:
+            raise RuntimeError('Значение x не удовлетворяет ОДЗ логарифма')
 
 
 def log_approx(func):
@@ -261,12 +230,9 @@ def log_approx(func):
     y_args = func[1]
     n = len(x_args)
 
-    for i in x_args:
-        if i <= 0:
-            raise RuntimeError('Значение функции не удовлетворяет ОДЗ логарифма')
-
+    check_tolerance_range(x_args)
     lnx_args = [math.log(i) for i in x_args]
-    s_x = sum(x_args)
+    s_x = sum(lnx_args)
     s_y = sum(y_args)
 
     xx_args = [i * i for i in lnx_args]
@@ -281,32 +247,11 @@ def log_approx(func):
 
     a = delta1 / delta
     b = delta2 / delta
-
-    print('Коэффициент a:', a)
-    print('Коэффициент b:', b)
-    apprx_func = lambda x: a * math.log(x) + b
-
-    # Мера отклонения
-    S = 0
-
-    k = 0
-    func_arr = [0] * n
-    e_arr = [0] * n
-    p_arr = [0.0] * n
-    for i in range(n):
-        # МНК
-        func_arr[i] = apprx_func(x_args[i])
-        e_arr[i] = func_arr[i] - y_args[i]
-        p_arr[i] = e_arr[i] / func_arr[i]
-        e_kv = e_arr[i] * e_arr[i]
-        S += e_kv
-        k += 1
-        print(f'{k}-я итерация:')
-        print(f'Значение аппроксимирующей функции: {func_arr[i]}')
-        print(f'Отклонение: {e_arr[i]}')
-        print(f'Оценка относительной погрешности аппроксимации: {p_arr[i]}')
-    sko = math.sqrt(S/n)
-    return func_arr, e_arr, p_arr, S, sko
+    approx = lambda x: a * math.log(x) + b
+    print(f'Аппроксимирующая функция: {round(a, 3)}*ln(x) + {round(b, 3)}')
+    func_arr, e_arr, p_arr, S = mnk(approx, x_args, y_args)
+    sko = math.sqrt(S / n)
+    return approx, func_arr, e_arr, p_arr, sko
 
 
 def pow_approx(func):
@@ -315,13 +260,8 @@ def pow_approx(func):
     y_args = func[1]
     n = len(x_args)
 
-    for i in x_args:
-        if i <= 0:
-            raise RuntimeError('Значение x не удовлетворяет ОДЗ логарифма')
-
-    for i in y_args:
-        if i <= 0:
-            raise RuntimeError('Значение y не удовлетворяет ОДЗ логарифма')
+    check_tolerance_range(x_args)
+    check_tolerance_range(y_args)
 
     lnx_args = [math.log(i) for i in x_args]
     lny_args = [math.log(i) for i in y_args]
@@ -341,29 +281,8 @@ def pow_approx(func):
     a = delta1 / delta
     b = delta2 / delta
 
-    print('Коэффициент a:', a)
-    print('Коэффициент b:', b)
-    apprx_func = lambda x: a * math.log(x) + math.log(b)
-
-    # Мера отклонения
-    S = 0
-
-    k = 0
-    func_arr = [0.0] * n
-    e_arr = [0] * n
-    p_arr = [0.0] * n
-    for i in range(n):
-        # МНК
-        func_arr[i] = apprx_func(x_args[i])
-        e_arr[i] = func_arr[i] - y_args[i]
-        p_arr[i] = e_arr[i] / func_arr[i]
-        e_kv = e_arr[i] * e_arr[i]
-        S += e_kv
-        k += 1
-        print(f'{k}-я итерация:')
-        print(f'Значение аппроксимирующей функции: {func_arr[i]}')
-        print(f'Отклонение: {e_arr[i]}')
-        print(f'Оценка относительной погрешности аппроксимации: {p_arr[i]}')
-    sko = math.sqrt(S/n)
-    return apprx_func, func_arr, e_arr, p_arr, S, sko
-
+    approx = lambda x: a * math.log(x) + math.log(b)
+    print(f'Аппроксимирующая функция: {round(a, 3)}*ln(x) + ln({round(b, 3)})')
+    func_arr, e_arr, p_arr, S = mnk(approx, x_args, y_args)
+    sko = math.sqrt(S / n)
+    return approx, func_arr, e_arr, p_arr, sko

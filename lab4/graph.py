@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def graph(func, lin_approx, qd_approx, qub_approx, exp_aprox, log_approx, pow_approx):
+def graph(func, lin_approx, qd_approx, qub_approx, exp_approx, log_approx, pow_approx):
     x_args = func[0]
     y_args = func[1]
 
@@ -26,8 +26,8 @@ def graph(func, lin_approx, qd_approx, qub_approx, exp_aprox, log_approx, pow_ap
     ax.plot(x, lin_approx(x), "r", linewidth=2.0, label="linear")
     ax.plot(x, qd_approx(x), "g", linewidth=2.0, label="squad")
     ax.plot(x, qub_approx(x), "b", linewidth=2.0, label="cube")
-    if exp_aprox is not None:
-        ax.plot(x, exp_aprox(x), "pink", linewidth=2.0, label="exp")
+    if exp_approx is not None:
+        ax.plot(x, exp_approx(x), "blue", linewidth=2.0, label="exp")
     x = np.linspace(0.000001, max_x + 0.5, 10000)
     if log_approx is not None:
         ax.plot(x, log_approx(x), "darkred", linewidth=2.0, label="log")
