@@ -53,8 +53,6 @@ def linear_approx(func):
     a = delta1 / delta
     b = delta2 / delta
 
-    print('Коэффициент a:', a)
-    print('Коэффициент b:', b)
     apprx_func = lambda x: a * x + b
     print(f'Аппроксимирующая функция: {round(a, 3)}*x + {round(b, 3)}')
 
@@ -94,7 +92,10 @@ def linear_approx(func):
 
     # Коэффициент корреляции Пирсона:
     r = num_pirs / math.sqrt(xq_sum * yq_sum)
-    return apprx_func, func_arr, e_arr, p_arr, S, sko, r
+    print(f'Коэффийиент корреляции Пирсона: {round(r, 3)}')
+    print()
+    print()
+    return apprx_func, func_arr, e_arr, p_arr, sko
 
 
 def quad_approx(func):
@@ -133,6 +134,8 @@ def quad_approx(func):
     print(f'Аппроксимирующая функция: {round(a0, 3)} + {round(a1, 3)}*x + {round(a2, 3)}*x^2')
     func_arr, e_arr, p_arr, S = mnk(approx, x_args, y_args)
     sko = math.sqrt(S / n)
+    print()
+    print()
     return approx, func_arr, e_arr, p_arr, sko
 
 
@@ -181,6 +184,8 @@ def qubic_approx(func):
     print(f'Аппроксимирующая функция: {round(a0, 3)} + {round(a1, 3)}*x + {round(a2, 3)}*x^2 + {round(a3, 3)}*x^3')
     func_arr, e_arr, p_arr, S = mnk(approx, x_args, y_args)
     sko = math.sqrt(S / n)
+    print()
+    print()
     return approx, func_arr, e_arr, p_arr, sko
 
 
@@ -215,6 +220,8 @@ def exp_approx(func):
     print(f'Аппроксимирующая функция: {round(a, 3)}*x + ln({round(b, 3)})')
     func_arr, e_arr, p_arr, S = mnk(approx, x_args, y_args)
     sko = math.sqrt(S / n)
+    print()
+    print()
     return approx, func_arr, e_arr, p_arr, sko
 
 
@@ -251,6 +258,8 @@ def log_approx(func):
     print(f'Аппроксимирующая функция: {round(a, 3)}*ln(x) + {round(b, 3)}')
     func_arr, e_arr, p_arr, S = mnk(approx, x_args, y_args)
     sko = math.sqrt(S / n)
+    print()
+    print()
     return approx, func_arr, e_arr, p_arr, sko
 
 
@@ -285,4 +294,6 @@ def pow_approx(func):
     print(f'Аппроксимирующая функция: {round(a, 3)}*ln(x) + ln({round(b, 3)})')
     func_arr, e_arr, p_arr, S = mnk(approx, x_args, y_args)
     sko = math.sqrt(S / n)
+    print()
+    print()
     return approx, func_arr, e_arr, p_arr, sko
