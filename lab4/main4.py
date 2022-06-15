@@ -37,6 +37,6 @@ if __name__ == '__main__':
     try:
         io_arr = [read_from_console, read_from_file]
         n, function = io_arr[get_data_source()]()
-        main(func)
+        main(function)
     except (RuntimeError, ValueError) as e:
         print(e)

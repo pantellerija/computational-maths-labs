@@ -82,10 +82,11 @@ def linear_approx(func):
         e_kv = e_arr[i] * e_arr[i]
         S += e_kv
         k += 1
+        print()
         print(f'{k}-я итерация:')
-        print(f'Значение аппроксимирующей функции: {round(func_arr[i])}')
-        print(f'Отклонение: {round(e_arr[i])}')
-        print(f'Оценка относительной погрешности аппроксимации: {round(p_arr[i])}')
+        print(f'Значение аппроксимирующей функции: {round(func_arr[i],4)}')
+        print(f'Отклонение: {round(e_arr[i],4)}')
+        print(f'Оценка относительной погрешности аппроксимации: {round(p_arr[i],4)}')
     xq_sum = sum(xq_dev)
     yq_sum = sum(yq_dev)
     sko = math.sqrt(S / n)
@@ -216,7 +217,7 @@ def exp_approx(func):
     a = delta1 / delta
     b = delta2 / delta
 
-    approx = lambda x: a * x + math.log(b)
+    approx = lambda x: np.exp(b)*np.exp(a*x)
     print(f'Аппроксимирующая функция: {round(a, 3)}*x + ln({round(b, 3)})')
     func_arr, e_arr, p_arr, S = mnk(approx, x_args, y_args)
     sko = math.sqrt(S / n)
@@ -254,7 +255,7 @@ def log_approx(func):
 
     a = delta1 / delta
     b = delta2 / delta
-    approx = lambda x: a * math.log(x) + b
+    approx = lambda x: a * np.log(x) + b
     print(f'Аппроксимирующая функция: {round(a, 3)}*ln(x) + {round(b, 3)}')
     func_arr, e_arr, p_arr, S = mnk(approx, x_args, y_args)
     sko = math.sqrt(S / n)
@@ -290,7 +291,7 @@ def pow_approx(func):
     a = delta1 / delta
     b = delta2 / delta
 
-    approx = lambda x: a * math.log(x) + math.log(b)
+    approx = lambda x: np.exp(b)*(x**a)
     print(f'Аппроксимирующая функция: {round(a, 3)}*ln(x) + ln({round(b, 3)})')
     func_arr, e_arr, p_arr, S = mnk(approx, x_args, y_args)
     sko = math.sqrt(S / n)
