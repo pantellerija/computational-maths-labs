@@ -20,7 +20,7 @@ if __name__ == '__main__':
         a = get_arg()
         for p in polynomials:
             arg = p(x_arr, y_arr, a)
-            # df = pd.DataFrame(list(arg), columns=['f(x)'])
+            # df = pd.DataFrame(list(arg))
             print(arg)
             graph(x_arr, y_arr, p)
     except ValueError as e:

@@ -1,7 +1,7 @@
 def trapezoid_sum(func, a, b, n):
-    h = 1.0 * (b - a) / n
+    h = (b - a) / n
     sum = 0.5 * (func(a) + func(b))
-    for i in range(1,n-1):
+    for i in range(1, n-1):
         sum += func(a + i * h)
     return sum * h
 
@@ -9,7 +9,7 @@ def trapezoid_sum(func, a, b, n):
 def trapezoidal_method(func, a, b, n, eps):
     print('---Метод трапеций---')
     k = 2
-    h = 1.0 * (b - a) / n
+    h = (b - a) / n
     sum = trapezoid_sum(func, a, b, n) * h
     M = max(1, abs(sum))
     while M > eps:
@@ -33,7 +33,7 @@ def simpson_sum(func, a, b, n):
 def simpson_method(func, a, b, n, eps):
     print('---Метод Симпсона---')
     k = 4
-    h = 1.0 * (b - a) / n
+    h = (b - a) / n
     sum = (func(a) + 4 * func(a + h) + func(b))
     M = max(1, abs(sum))
     while M > eps:

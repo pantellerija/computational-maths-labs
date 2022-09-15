@@ -1,7 +1,16 @@
+from lab6.io import get_float, get_method_type
+from lab6.methods import modified_euler, adams
 
+# b = 2 y0 = -1 x0 = 1 h = .1 eps = .01
+func = lambda x, y: y + (1+x)*y*y
+
+methods = [modified_euler, adams]
 
 if __name__ == '__main__':
-    print('start')
-    x_arr = [1, 4, 6, 5, 3, 1.5, 2.5, 3.5]
-    y_arr = [0, 1.3862944, 1.7917595, 1.6094379, 1.0986123, 0.4054641, 0.9162907, 1.2527630]
-    
+    print("diff eq: y'(x) = y + (1+x)*y^2")
+    b = get_float("enter the right boundary of the interval: ")
+    x0 = get_float("enter x0: ")
+    y0 = get_float("enter y(x0): ")
+    h = get_float("enter h: ")
+    eps = get_float("enter epsilon: ")
+    methods[get_method_type()](func, y0, x0, b, h, eps)
