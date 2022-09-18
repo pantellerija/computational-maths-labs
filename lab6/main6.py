@@ -1,7 +1,7 @@
 from lab6.io import get_float, get_method_type
 from lab6.methods import modified_euler, adams
 
-# b = 2 y0 = -1 x0 = 1 h = .1 eps = .01
+# b = 1.5 y0 = -1 x0 = 1 h = .1 eps = .01
 func = lambda x, y: y + (1+x)*y*y
 
 methods = [modified_euler, adams]
