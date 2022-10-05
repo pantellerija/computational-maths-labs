@@ -113,7 +113,7 @@ def check_conv_for_sys_eq(p_ders):
 
 
 def sys_iteration_method(f_arr, x1_init, x2_init, eps):
-    print('--Метод простой итерации---')
+    print('---Метод простой итерации---')
     k = 0
     x1, x2 = 0, 0
     err_vec1, err_vec2 = 0, 0
